@@ -82,6 +82,9 @@ while is_playing:
     for bullet in hero.bullets_fired:
         if bullet.has_collided_with_top_wall(GAME_TOP_WALL):
             bullet.is_alive = False
+
+    hero.remove_dead_bullets()
+    for bullet in hero.bullets_fired:
         bullet.move()
         bullet.show(game_display)
 
