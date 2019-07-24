@@ -16,8 +16,6 @@ GAME_LEFT_WALL = GAME_SIDE_MARGIN + GAME_BORDER_WIDTH
 
 BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
-
-
 #MEDIA FILES
 player_image = pygame.image.load('spaceship.gif')
 bullet_image = pygame.image.load('bullet.gif')
@@ -46,6 +44,8 @@ def handle_events():
             elif event.key == pygame.K_RIGHT:
                 should_move_right = True
                 should_move_left = False
+            elif event.key == pygame.K_SPACE:
+                hero.shoot(bullet_image)
         elif event.type == pygame.KEYUP:
             if event.key == pygame.K_LEFT:
                 should_move_left = False
@@ -78,6 +78,13 @@ while is_playing:
     pygame.draw.rect(game_display, BLACK,(GAME_LEFT_WALL, GAME_TOP_WALL, WINDOW_WIDTH - GAME_LEFT_WALL - GAME_SIDE_MARGIN - GAME_BORDER_WIDTH, WINDOW_HEIGHT - GAME_TOP_WALL - GAME_BOTTOM_MARGIN - GAME_BORDER_WIDTH))
 
     hero.show(game_display)
+
+    for bullet in hero.bullets_fired:
+        if bullet.has_collided_with_top_wall(GAME_TOP_WALL):
+            bullet.is_alive = False
+        bullet.move()
+        bullet.show(game_display)
+
      # score_text = score_font.render(str(snake.score), False, (255, 255, 255))
      #game_display.blit(score_text, (0,0))
     pygame.display.update()
