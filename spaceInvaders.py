@@ -1,5 +1,6 @@
 import pygame
 from hero_class import Hero
+from enemy import Enemy 
 
 # GAME SETTINGS
 WINDOW_WIDTH = 400
@@ -19,6 +20,7 @@ WHITE = (255, 255, 255)
 #MEDIA FILES
 player_image = pygame.image.load('spaceship.gif')
 bullet_image = pygame.image.load('bullet.gif')
+enemy_image = pygame.image.load('enemy.gif')
 
 pygame.init()
 clock = pygame.time.Clock()
@@ -52,8 +54,16 @@ def handle_events():
             elif event.key == pygame.K_RIGHT:
                 should_move_right = False 
 
-hero = Hero(player_image, 200, GAME_BOTTOM_WALL - player_image.get_height())
 
+hero = Hero(player_image, 200, GAME_BOTTOM_WALL - player_image.get_height())
+enemies = []
+enemies.append(Enemy(enemy_image, 25, 25))
+enemies.append(Enemy(enemy_image, 50, 25))
+enemies.append(Enemy(enemy_image, 75, 25))
+enemies.append(Enemy(enemy_image, 100, 25))
+enemies.append(Enemy(enemy_image, 125, 25))
+
+#enemy = Enemy(enemy_image, 25, 25)
 
 #in the main game loop
 is_playing = True
@@ -69,6 +79,24 @@ while is_playing:
     if hero.has_collided_with_right_wall(GAME_RIGHT_WALL) == False:
         if should_move_right:
             hero.xcor += 10
+
+    #move each enemy down and change its direction if it hits a wall
+    for i in range(0, len(enemies)):
+        if enemies[i].has_collided_with_left_wall(GAME_LEFT_WALL):
+            for k in range(0, len(enemies)):
+                enemies[k].ycor += 10
+                enemies[k].direction = 1
+            break
+
+        if enemies[i].has_collided_with_right_wall(GAME_RIGHT_WALL):
+            for k in range(0, len(enemies)):
+                enemies[k].ycor += 10
+                enemies[k].direction = -1
+            break
+
+    #Move each enemy over based on its direction
+    for i in range(0, len(enemies)):
+        enemies[i].xcor += 10 * enemies[i].direction
         
     game_display.blit(game_display, (0, 0))
         
@@ -78,6 +106,9 @@ while is_playing:
     pygame.draw.rect(game_display, BLACK,(GAME_LEFT_WALL, GAME_TOP_WALL, WINDOW_WIDTH - GAME_LEFT_WALL - GAME_SIDE_MARGIN - GAME_BORDER_WIDTH, WINDOW_HEIGHT - GAME_TOP_WALL - GAME_BOTTOM_MARGIN - GAME_BORDER_WIDTH))
 
     hero.show(game_display)
+    
+    for i in range(0, len(enemies)):
+        enemies[i].show(game_display)
 
     for bullet in hero.bullets_fired:
         if bullet.has_collided_with_top_wall(GAME_TOP_WALL):
