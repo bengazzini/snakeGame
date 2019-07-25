@@ -15,7 +15,7 @@ class Hero():
     def has_collided_with_left_wall(self, left_wall_x_location):
         return self.xcor <= left_wall_x_location
     def shoot(self, bullet_image):
-        new_bullet = Bullet(bullet_image, self.xcor, self.ycor)
+        new_bullet = Bullet(bullet_image, self.xcor + self.width / 2 - bullet_image.get_width() / 2, self.ycor)
         self.bullets_fired.append(new_bullet)
     def remove_dead_bullets(self):
         for i in range(len(self.bullets_fired) -1, -1, -1):
