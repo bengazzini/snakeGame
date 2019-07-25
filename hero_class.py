@@ -6,6 +6,8 @@ class Hero():
         self.img = image
         self.xcor = x_coordinate
         self.ycor = y_coordinate
+        self.direction = 0
+        self.speed = 10
         self.width = image.get_width()
         self.bullets_fired = []
     def show(self, game_display):
@@ -22,9 +24,18 @@ class Hero():
             if self.bullets_fired[i].is_alive == False:
                 self.bullets_fired.pop(i)
         
-        
-        for bullet in self.bullets_fired:
-            if bullet.is_alive == False:
-                self.bullets_fired.remove(bullet)
+    def move(self, left_wall, right_wall):
+        if self.direction == -1 and self.has_collided_with_left_wall(left_wall) == False:
+            self.xcor += self.speed * self.direction
+        elif self.direction == 1 and self.has_collided_with_right_wall(right_wall) == False:
+            self.xcor += self.speed * self.direction
+
+    def set_direction_right(self):
+        self.direction = 1
+    def set_direction_left(self):
+        self.direction = -1
+    def set_direction_none(self):
+        self.directon = 0
+
 
 
