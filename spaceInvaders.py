@@ -42,6 +42,8 @@ def handle_events():
                 hero.set_direction_right()
             elif event.key == pygame.K_SPACE:
                 hero.shoot(bullet_image)
+            elif event.key == pygame.K_p:
+                pause_game()
         elif event.type == pygame.KEYUP:
             if event.key == pygame.K_LEFT:
                 hero.set_direction_none()
@@ -58,6 +60,18 @@ def show_background():
     game_display.fill((BLACK))
     pygame.draw.rect(game_display, WHITE, (GAME_SIDE_MARGIN, GAME_TOP_MARGIN, WINDOW_WIDTH - GAME_SIDE_MARGIN * 2, WINDOW_HEIGHT - GAME_BOTTOM_MARGIN * 2))
     pygame.draw.rect(game_display, BLACK,(GAME_LEFT_WALL, GAME_TOP_WALL, WINDOW_WIDTH - GAME_LEFT_WALL - GAME_SIDE_MARGIN - GAME_BORDER_WIDTH, WINDOW_HEIGHT - GAME_TOP_WALL - GAME_BOTTOM_MARGIN - GAME_BORDER_WIDTH))
+
+def pause_game():
+    is_paused = True
+    while is_paused:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                is_paused = False
+                hero.is_alive = False
+            elif event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_p:
+                    is_paused = False
+        clock.tick(30)
 
 #in the main game loop
 is_playing = True
