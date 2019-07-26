@@ -1,6 +1,6 @@
 import pygame
 from hero_class import Hero
-from enemy import Enemy 
+from fleet import Fleet
 
 # GAME SETTINGS
 WINDOW_WIDTH = 400
@@ -16,7 +16,7 @@ GAME_BOTTOM_WALL = WINDOW_HEIGHT - GAME_BOTTOM_MARGIN - GAME_BORDER_WIDTH
 GAME_LEFT_WALL = GAME_SIDE_MARGIN + GAME_BORDER_WIDTH
 
 BLACK = (0, 0, 0)
-WHITE = (255, 255, 255)
+WHITE = (255, 0, 0)
 #MEDIA FILES
 player_image = pygame.image.load('spaceship.gif')
 bullet_image = pygame.image.load('bullet.gif')
@@ -50,14 +50,14 @@ def handle_events():
 
 
 hero = Hero(player_image, 200, GAME_BOTTOM_WALL - player_image.get_height())
-enemies = []
-enemies.append(Enemy(enemy_image, 25, 25))
-enemies.append(Enemy(enemy_image, 50, 25))
-enemies.append(Enemy(enemy_image, 75, 25))
-enemies.append(Enemy(enemy_image, 100, 25))
-enemies.append(Enemy(enemy_image, 125, 25))
+fleet = Fleet(3, 5, 4, enemy_image, GAME_LEFT_WALL + 1, GAME_TOP_WALL + 1)
 
-#enemy = Enemy(enemy_image, 25, 25)
+
+def show_background():
+    game_display.blit(game_display, (0, 0))        
+    game_display.fill((BLACK))
+    pygame.draw.rect(game_display, WHITE, (GAME_SIDE_MARGIN, GAME_TOP_MARGIN, WINDOW_WIDTH - GAME_SIDE_MARGIN * 2, WINDOW_HEIGHT - GAME_BOTTOM_MARGIN * 2))
+    pygame.draw.rect(game_display, BLACK,(GAME_LEFT_WALL, GAME_TOP_WALL, WINDOW_WIDTH - GAME_LEFT_WALL - GAME_SIDE_MARGIN - GAME_BORDER_WIDTH, WINDOW_HEIGHT - GAME_TOP_WALL - GAME_BOTTOM_MARGIN - GAME_BORDER_WIDTH))
 
 #in the main game loop
 is_playing = True
@@ -65,50 +65,20 @@ while hero.is_alive:
     
     handle_events()
 
+
     hero.move(GAME_LEFT_WALL, GAME_RIGHT_WALL)
 
+    hero.move_all_bullets()
 
-    #move each enemy down and change its direction if it hits a wall
-    for enemy in enemies:
-        if enemy.has_collided_with_left_wall(GAME_LEFT_WALL):
-            for e in enemies:
-                e.ycor += 10
-                e.direction = 1
-            break
+    fleet.handle_wall_collision(GAME_LEFT_WALL, GAME_RIGHT_WALL)
+    hero.handle_wall_collision_for_bullets(GAME_TOP_WALL)
 
-        if enemy.has_collided_with_right_wall(GAME_RIGHT_WALL):
-            for e in enemies:
-                e.ycor += 10
-                e.direction = -1
-            break
-
-    #Move each enemy over based on its direction
-    for i in range(0, len(enemies)):
-        enemies[i].xcor += 10 * enemies[i].direction
-        
-    for enemy in enemies:
-        enemy.xcor += 4 * enemy.direction
+    fleet.move_over()
    
-    game_display.blit(game_display, (0, 0))
-        
-    game_display.fill((BLACK))
-
-    pygame.draw.rect(game_display, WHITE, (GAME_SIDE_MARGIN, GAME_TOP_MARGIN, WINDOW_WIDTH - GAME_SIDE_MARGIN * 2, WINDOW_HEIGHT - GAME_BOTTOM_MARGIN * 2))
-    pygame.draw.rect(game_display, BLACK,(GAME_LEFT_WALL, GAME_TOP_WALL, WINDOW_WIDTH - GAME_LEFT_WALL - GAME_SIDE_MARGIN - GAME_BORDER_WIDTH, WINDOW_HEIGHT - GAME_TOP_WALL - GAME_BOTTOM_MARGIN - GAME_BORDER_WIDTH))
-
+    show_background()
     hero.show(game_display)
-    
-    for i in range(0, len(enemies)):
-        enemies[i].show(game_display)
-
-    for bullet in hero.bullets_fired:
-        if bullet.has_collided_with_top_wall(GAME_TOP_WALL):
-            bullet.is_alive = False
-
-    hero.remove_dead_bullets()
-    for bullet in hero.bullets_fired:
-        bullet.move()
-        bullet.show(game_display)
+    fleet.show(game_display)
+    hero.show_all_bullets(game_display)
 
      # score_text = score_font.render(str(snake.score), False, (255, 255, 255))
      #game_display.blit(score_text, (0,0))
@@ -117,6 +87,3 @@ while hero.is_alive:
 
 pygame.display.quit()
 pygame.quit()
-
-
-

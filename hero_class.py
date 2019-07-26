@@ -19,10 +19,24 @@ class Hero():
     def shoot(self, bullet_image):
         new_bullet = Bullet(bullet_image, self.xcor + self.width / 2 - bullet_image.get_width() / 2, self.ycor)
         self.bullets_fired.append(new_bullet)
+
+    def handle_wall_collision_for_bullets(self, top_wall):
+        for bullet in self.bullets_fired:
+            if bullet.has_collided_with_top_wall(top_wall):
+                bullet.is_alive = False
+    
     def remove_dead_bullets(self):
         for i in range(len(self.bullets_fired) -1, -1, -1):
             if self.bullets_fired[i].is_alive == False:
                 self.bullets_fired.pop(i)
+
+    def move_all_bullets(self):
+        for bullet in self.bullets_fired:
+            bullet.move()
+
+    def show_all_bullets(self, game_display):
+        for bullet in self.bullets_fired:
+            bullet.show(game_display)
         
     def move(self, left_wall, right_wall):
         if self.direction == -1 and self.has_collided_with_left_wall(left_wall) == False:
@@ -35,7 +49,7 @@ class Hero():
     def set_direction_left(self):
         self.direction = -1
     def set_direction_none(self):
-        self.directon = 0
+        self.direction = 0
 
 
 
