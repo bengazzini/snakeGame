@@ -2,9 +2,10 @@
 # Choose an interpreter that works
 import pygame
 import random
+import os
 
 #game settings
-GAME_SIZE = 400
+GAME_SIZE = 200 * 2
 BLOCK_SIZE = GAME_SIZE / 40
 APPLE_COLOR = (255, 0, 0)
 BACKGROUND_COLOR = (0, 0, 0)
@@ -23,7 +24,18 @@ game_display = pygame.display.set_mode((GAME_SIZE, GAME_SIZE))
 score_font = pygame.font.SysFont('Times New Roman', int(GAME_SIZE * 0.065), True)
 title_font = pygame.font.SysFont('Times New Roman', int(GAME_SIZE * 0.2), True)
 title_font2 = pygame.font.SysFont('Times New Roman', int(GAME_SIZE * .1), True)
+title_font3 = pygame.font.SysFont('Times New Roman', int (GAME_SIZE * .07), True)
 pygame.display.set_caption('SNAKE!')
+pygame.mixer.init()
+
+background_music = ['LLusion Walk But In A Garden.ogg']
+current_background_music_track = 0
+def play_music(path):
+    songs = []
+    for filename in os.listdir(path):
+        if filename.endswith('.ogg'):
+            songs.append(os.path.join(path, filename))
+    return songs
 
 class Color_Cycler():
     def __init__(self, *colors):
@@ -161,10 +173,13 @@ def pause_game():
         pygame.display.update()
         clock.tick(5)
 
+songs = play_music(path='/Users/bengazzini/Documents/SNAKE')
+pygame.mixer.music.load(songs[current_background_music_track])
+pygame.mixer.music.play()
+
 color_cycler = Color_Cycler(RED, ORANGE, YELLOW, GREEN, BLUE, PURPLE)
 snake = Snake(BLOCK_SIZE * 5, BLOCK_SIZE * 5)
 apple = Apple(snake.body)
-
 #Title screen
 show_title_screen = True
 while show_title_screen:
@@ -177,10 +192,13 @@ while show_title_screen:
                 show_title_screen = False
     title_text = title_font.render('||SNAKE||', False, GREEN)
     title_text2 = title_font2.render('PRESS SPACE TO START', False, GREEN)
-    game_display.blit(title_text, (GAME_SIZE / 2 - title_text.get_width() / 2, 100))
-    game_display.blit(title_text2, (GAME_SIZE / 2 - title_text2.get_width() /2, 300))
+    title_text3 = title_font3.render('Ben Gazzini 2019', False, GREEN)
+    game_display.blit(title_text, (GAME_SIZE / 2 - title_text.get_width() / 2, 80))
+    game_display.blit(title_text2, (GAME_SIZE / 2 - title_text2.get_width() / 2, 210))
+    game_display.blit(title_text3, (GAME_SIZE / 2 - title_text3.get_width() / .95, 380))
     pygame.display.flip()
     clock.tick(FRAMES_PER_SECOND)
+
 
 # Main Game Loop
 frame_counter = 0
